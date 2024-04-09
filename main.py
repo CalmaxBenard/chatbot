@@ -1,13 +1,14 @@
 from openai import OpenAI
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.common.exceptions import NoSuchDriverException, StaleElementReferenceException, TimeoutException
-from selenium.webdriver.support import expected_conditions
-from time import sleep
+import streamlit as st
+import warnings
 import os
+warnings.filterwarnings("ignore")
 
-API_KEY = os.environ.get("API_KEY")
+st.set_page_config(page_title="happy-assistant", page_icon=":movie_camera:")
+st.title(":smile: Supergal Olivia")
+st.markdown("<style>div.block-container{padding-top:1.3rem}</style>", unsafe_allow_html=True)
+
+st.write("Hi there! Olivia here. How may I help you?")
 
 url = ("https://quillbot.com/?utm_medium=cpc&utm_source=google&utm_campaign=FA+-+HY+|+PERF+-+Search+|+Product+-+Ext"
        "+-+Chrome+-+Brand+|+DEVP+|+CPA&utm_term=quillbot&utm_content=664002325919&campaign_type=extension-19193089128"
@@ -16,54 +17,36 @@ url = ("https://quillbot.com/?utm_medium=cpc&utm_source=google&utm_campaign=FA+-
        "=&network=g&extension=23083258234&gad_source=1&gclid=Cj0KCQiA5-uuBhDzARIsAAa21T-Hc"
        "-pjkeHPV2t_cfR1rKVLngrF75WDQ2dkaMjCO9DFilSTNzHoYSAaAqp7EALw_wcB")
 
-client = OpenAI(
-    api_key=API_KEY,
-)
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-chat_log = []
+os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+client = OpenAI(api_key=OPENAI_API_KEY)
+
+chat_logs = []
+questions = []
+question_count = 0  # Initialize question count
 
 while True:
+    user_message = st.text_input("Type your question here...", key=f"user_input_{question_count}")
 
-    user_message = input("Ask me something? ")
+    if user_message != "":
+        if user_message.lower() == "quit":
+            break
+        else:
+            questions.append(user_message)
+            chat_logs.append({"role": "user", "content": user_message})
 
-    if user_message.lower() == "quit":
-        break
-    else:
-        chat_log.append({"role": "user", "content": user_message})
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=chat_logs,
+                temperature=0,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0
+            )
+            feedback = response.choices[0].message.content.strip("\n").strip()
 
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=chat_log
-        )
-        feedback = response.choices[0].message.content.strip("\n").strip()
+            st.write(f"Olivia:  \n{feedback}")
+            chat_logs.append({"role": "assistant", "content": feedback.strip("\n").strip()})
 
-        print(f"Olivia: \n{feedback}")
-        with open("original.txt", "a") as file:
-            file.write(f"{feedback} \n")
-        engine = webdriver.Chrome()
-
-        engine.get(url)
-        ignored = (NoSuchDriverException, StaleElementReferenceException, TimeoutException)
-
-        sleep(5)
-        text_area = WebDriverWait(engine, 10, ignored_exceptions=ignored) \
-            .until(expected_conditions.presence_of_element_located((By.ID, "paraphraser-input-box")))
-
-        text_area.send_keys(feedback)
-
-        button = WebDriverWait(engine, 10, ignored_exceptions=ignored) \
-            .until(expected_conditions.presence_of_element_located((By.CLASS_NAME, "css-1fz2g01")))
-
-        sleep(2)
-        button.click()
-
-        sleep(10)
-        paraphrased = WebDriverWait(engine, 10, ignored_exceptions=ignored) \
-            .until(expected_conditions.presence_of_element_located((By.ID, "paraphraser-output-box"))).text
-
-        # print(paraphrased)
-        with open("paraphrased.txt", "a") as file:
-            file.write(f"{paraphrased} \n")
-        engine.quit()
-
-        chat_log.append({"role": "assistant", "content": feedback.strip("\n").strip()})
+            question_count += 1  # Increment question count for next iteration
