@@ -19,7 +19,7 @@ url = ("https://quillbot.com/?utm_medium=cpc&utm_source=google&utm_campaign=FA+-
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+os.environ["OPENAI_API_KEY"] = str(OPENAI_API_KEY)
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 chat_logs = []
