@@ -23,28 +23,28 @@ os.environ["OPENAI_API_KEY"] = str(OPENAI_API_KEY)
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 chat_logs = []
-# user_key = 0
-# while True:
-user_message = st.text_area("Type your question here...")
+user_key = 0
+while True:
+    user_message = st.text_area("Type your question here...", key=user_key)
 
-if user_message != "":
-    # if user_message.lower() == "quit":
-    #     break
-    # else:
-    chat_logs.append({"role": "user", "content": user_message})
+    if user_message != "":
+        if user_message.lower() == "quit":
+            break
+        else:
+            chat_logs.append({"role": "user", "content": user_message})
 
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=chat_logs,
-        temperature=0,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
-    feedback = response.choices[0].message.content.strip("\n").strip()
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=chat_logs,
+                temperature=0,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0
+            )
+            feedback = response.choices[0].message.content.strip("\n").strip()
 
-    st.write(f"Olivia:  \n{feedback}")
-    chat_logs.append({"role": "assistant", "content": feedback.strip("\n").strip()})
+            st.write(f"Olivia:  \n{feedback}")
+            chat_logs.append({"role": "assistant", "content": feedback.strip("\n").strip()})
 
-        # user_key += 1
+        user_key += 1
 
