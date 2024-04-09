@@ -4,11 +4,13 @@ import warnings
 import os
 warnings.filterwarnings("ignore")
 
+
 st.set_page_config(page_title="happy-assistant", page_icon=":movie_camera:")
 st.title("🧑🏽‍💻 Supergal Olivia")
 st.markdown("<style>div.block-container{padding-top:1.3rem}</style>", unsafe_allow_html=True)
 
 st.write("Hi there! Olivia here. How may I help you?")
+
 
 url = ("https://quillbot.com/?utm_medium=cpc&utm_source=google&utm_campaign=FA+-+HY+|+PERF+-+Search+|+Product+-+Ext"
        "+-+Chrome+-+Brand+|+DEVP+|+CPA&utm_term=quillbot&utm_content=664002325919&campaign_type=extension-19193089128"
@@ -26,7 +28,7 @@ chat_logs = []
 max_iter = 100
 user_key = 0
 while user_key < max_iter:
-    user_message = st.text_input("Type your question here...", key=user_key)
+    user_message = st.text_input("Type your question here or 'quit' to exit...", key=user_key)
 
     if user_message != "":
         if user_message.lower() == "quit":
