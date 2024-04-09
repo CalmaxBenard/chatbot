@@ -5,7 +5,7 @@ import os
 warnings.filterwarnings("ignore")
 
 st.set_page_config(page_title="happy-assistant", page_icon=":movie_camera:")
-st.title(":smile: Supergal Olivia")
+st.title("🧑🏽‍💻 Supergal Olivia")
 st.markdown("<style>div.block-container{padding-top:1.3rem}</style>", unsafe_allow_html=True)
 
 st.write("Hi there! Olivia here. How may I help you?")
@@ -23,9 +23,10 @@ os.environ["OPENAI_API_KEY"] = str(OPENAI_API_KEY)
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 chat_logs = []
+max_iter = 100
 user_key = 0
-while True:
-    user_message = st.text_area("Type your question here...", key=user_key)
+while user_key < max_iter:
+    user_message = st.text_input("Type your question here...", key=user_key)
 
     if user_message != "":
         if user_message.lower() == "quit":
