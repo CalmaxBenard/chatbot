@@ -25,7 +25,7 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 chat_logs = []
 user_key = 0
 while True:
-    user_message = st.text_input("Type your question here...", key=user_key)
+    user_message = st.text_area("Type your question here...", key=user_key)
 
     if user_message != "":
         if user_message.lower() == "quit":
