@@ -23,17 +23,13 @@ os.environ["OPENAI_API_KEY"] = str(OPENAI_API_KEY)
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 chat_logs = []
-questions = []
-question_count = 0  # Initialize question count
-
-while True:
-    user_message = st.text_input("Type your question here...", key=f"user_input_{question_count}")
+for i in range(1, 2):
+    user_message = st.text_area("Type your question here...", key=i)
 
     if user_message != "":
         if user_message.lower() == "quit":
             break
         else:
-            questions.append(user_message)
             chat_logs.append({"role": "user", "content": user_message})
 
             response = client.chat.completions.create(
@@ -49,4 +45,5 @@ while True:
             st.write(f"Olivia:  \n{feedback}")
             chat_logs.append({"role": "assistant", "content": feedback.strip("\n").strip()})
 
-            question_count += 1  # Increment question count for next iteration
+        i += 1
+
